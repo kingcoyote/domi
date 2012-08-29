@@ -2,6 +2,10 @@
 
 namespace Domi;
 
+use DOMDocument;
+use DOMXpath;
+use XSLTProcessor;
+
 /**
  * Improved DOM object - a merger of DOMDocument, DOMXpath and XSLTProcessor, 
  * with extended functionality for converting PHP data types into an XML 
