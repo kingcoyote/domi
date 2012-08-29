@@ -15,11 +15,11 @@
     ],
     "require": {
         "php": ">=5.2.0",
-        "xsl": "*"
+        "ext-xsl": "*"
     },
     "autoload": {
         "psr-0": {
-            "domi": "src"
+            "kingcoyote": "src"
         }
     }
 }
