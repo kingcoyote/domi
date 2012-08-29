@@ -1,0 +1,25 @@
+{
+    "name": "kingcoyote/domi",
+    "type": "library",
+    "description": "Advanced DOMDocument, DOMXpath and XSLTProcessor library for PHP",
+    "keywords": ["dom", "domdocument", "xpath", "domxpath", "xsl", "xslt", "xsltprocessor"],
+    "homepage": "http://github.com/kingcoyote/domi",
+    "license": "GPL3",
+    "authors": [
+        {
+            "name": "Steve Phillips",
+            "email": "kingcoyote85@gmail.com",
+            "homepage": "http://stevephillips.me",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.2.0",
+        "xsl": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "domi": "src"
+        }
+    }
+}

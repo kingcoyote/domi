@@ -1,17 +1,17 @@
 <?php
 
-namespace Domi;
+namespace kingcoyote;
 
 /**
  * Improved DOM object - a merger of DOMDocument, DOMXpath and XSLTProcessor, 
  * with extended functionality for converting PHP data types into an XML 
  * structure and convert the XML into the desired output format
  *
- * @author Steve Phillips <kingcoyote85@visual77.com>
+ * @author Steve Phillips <kingcoyote85@gmail.com>
  * @version 1.2.0
  */
 
-class DOMi {
+class Domi {
     public $listSuffix = "-list"; ///< @var string suffix used when a list is made
     public $xslt;                 ///< @var XSLTProcessor internal XSLTProcessor 
     public $dom;                  ///< @var DOMDocument internal DOMDocument
