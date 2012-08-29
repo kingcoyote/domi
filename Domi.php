@@ -11,7 +11,8 @@ namespace kingcoyote;
  * @version 1.2.0
  */
 
-class Domi {
+class Domi 
+{
     public $listSuffix = "-list"; ///< @var string suffix used when a list is made
     public $xslt;                 ///< @var XSLTProcessor internal XSLTProcessor 
     public $dom;                  ///< @var DOMDocument internal DOMDocument
@@ -44,8 +45,9 @@ class Domi {
      *  @param string character encoding for the DOMi object, ie UTF-8
      *  @retval DOMi the created DOMi object
      */
-    public function __construct($mainNodeName='root', $encoding='UTF-8') {
-        if(self::isValidPrefix($mainNodeName)) {
+    public function __construct($mainNodeName='root', $encoding='UTF-8') 
+    {
+        if (self::isValidPrefix($mainNodeName)) {
             $this->encoding = $encoding;
             $this->dom = new DOMDocument('1.0', $this->encoding);
             $this->mainNode = $this->createElement($mainNodeName);
@@ -67,23 +69,26 @@ class Domi {
      *  @param DOMNode node to attach the newly created onto
      *  @retval DOMNode the newly created node
      */
-    public function attachToXml($data, $prefix, &$parentNode = false) {
-        if(!$parentNode) {
+    public function attachToXml($data, $prefix, &$parentNode = false)
+    {
+        if (!$parentNode) {
             $parentNode = &$this->mainNode;
         }
         // i don't like how this is done, but i can't see an easy alternative
         // that is clean. if the prefix is attributes, instead of creating
         // a node, just put all of the data onto the parent node as attributes
-        if(strtolower($prefix) == 'attributes') {
+        if (strtolower($prefix) == 'attributes') {
             // set all of the attributes onto the node
-            foreach($data as $key=>$val)
+            foreach ($data as $key=>$val) {
                 $parentNode->setAttribute($key, $val);
-            
+            }
+
             $node = &$parentNode;
         } else {
             $node = $this->convertToXml($data, $prefix);
-            if($node instanceof DOMNode)
+            if ($node instanceof DOMNode) {
                 $parentNode->appendChild($node);
+            }
         }
         return $node;
     }
@@ -96,16 +101,20 @@ class Domi {
      *  @param string the name of the node that the data will be built onto
      *  @retval DOMNode the newly created node
      */
-    public function convertToXml($data, $prefix) {
+    public function convertToXml($data, $prefix)
+    {
         $nodeName = $prefix;
         // figure out the prefix
-        if(!self::isValidPrefix($prefix))
+        if (!self::isValidPrefix($prefix)) {
             throw new exception("invalid prefix '$prefix'");
-        // if the data needs a list node, change the name to use the list-suffix
-        if(self::isListNode($data))
-            $nodeName = $prefix . $this->listSuffix;
+        }
         
-        switch(self::getDataType($data)) {
+        // if the data needs a list node, change the name to use the list-suffix
+        if (self::isListNode($data)) {
+            $nodeName = $prefix . $this->listSuffix;
+        }
+
+        switch (self::getDataType($data)) {
             // if this array has attributes, do some additional work
             case self::DT_ATTR_ARRAY:
                 // create the node, with the optionally specified value
@@ -119,19 +128,22 @@ class Domi {
                     array();
                 
                 // set all of the attributes onto the node
-                foreach($data['attributes'] as $key=>$val)
+                foreach ($data['attributes'] as $key=>$val) {
                     $node->setAttribute($key, $val);
-                
+                }
+
                 // remove the attributes and value so they aren't repeated
                 // as children of the element
                 unset($data['attributes']);
                 unset($data['values']);
             case self::DT_ARRAY:
                 // in the case of DT_ATTR_ARRAY, the node is already created
-                if(!isset($node))
+                if (!isset($node)) {
                     $node = $this->createElement($nodeName);
+                }
+
                 // attach each child as a subnode
-                foreach($data as $k=>$d) {
+                foreach ($data as $k=>$d) {
                     // figure out the child prefix
                     $childPrefix = self::isValidPrefix($k) ? $k : $prefix;
                     // recurse and attach
@@ -140,15 +152,17 @@ class Domi {
                 break;
             
             // when converting DOMi or DOMDocuments, just get the root node
-            case self::DT_DOMI: 
+            case self::DT_DOMI:
+                // no break
             case self::DT_DOMDOCUMENT:
                 $data = $data->childNodes->item(0);
+                // no break
             case self::DT_DOMNODE:
                 // the node must be imported to be usable in this DOMDocument
                 $domNode = $this->importNode($data, true);
                 // only create a new node if the prefix and current root
                 // node name aren't the same
-                if($prefix == $domNode->nodeName) {
+                if ($prefix == $domNode->nodeName) {
                     $node = $domNode;
                 } else {
                     $node = $this->createElement($prefix);
@@ -165,6 +179,7 @@ class Domi {
             
             case self::DT_BOOL:
                 $data = $data ? 'TRUE' : 'FALSE';
+                // no break
             default:
                 $node = $this->createElement(
                     $nodeName, 
@@ -188,12 +203,14 @@ class Domi {
      *  @retval string the result of the processing based on the stylesheets
      *      and the rendering mode
      */
-    public function render($stylesheets=false, $mode=self::RENDER_HTML) {
+    public function render($stylesheets=false, $mode=self::RENDER_HTML) 
+    {
         $this->xslt->importStylesheet($this->generateXsl($stylesheets));
         return $this->generateOutput($mode);
     }
     
-    private function isListNode($data) {
+    private function isListNode($data) 
+    {
         // if there are any invalid prefixes, a list must be used
         return 
             is_array($data) && 
@@ -205,30 +222,33 @@ class Domi {
             ) != count($data);
     }
     
-    private function getDataType($data) {
+    private function getDataType($data) 
+    {
         $dataType = self::DT_STRING;
         
-        if(is_array($data)) {
+        if (is_array($data)) 
+        {
             $dataType = 
                 isset($data['attributes']) || isset($data['values']) ? 
                 self::DT_ATTR_ARRAY : 
                 self::DT_ARRAY;
-        } elseif($data INSTANCEOF DOMi) {
+        } elseif ($data INSTANCEOF DOMi) {
             $dataType = self::DT_DOMI;
-        } elseif($data INSTANCEOF DOMDocument) {
+        } elseif ($data INSTANCEOF DOMDocument) {
             $dataType = self::DT_DOMDOCUMENT;
-        } elseif($data INSTANCEOF DOMNode) {
+        } elseif ($data INSTANCEOF DOMNode) {
             $dataType = self::DT_DOMNODE;
-        } elseif(is_object($data)) {
+        } elseif (is_object($data)) {
             $dataType = self::DT_OBJECT;
-        } elseif(is_bool($data)) {
+        } elseif (is_bool($data)) {
             $dataType = self::DT_BOOL;
         }
         
         return $dataType;
     }
     
-    private function generateXsl($stylesheets) {
+    private function generateXsl($stylesheets)
+    {
         // create a DOMDocument that will include every specified stylesheet
         $dom = new DOMDocument('1.0', $this->encoding);
         $stylesheetNode = $dom->createElementNS(
@@ -242,12 +262,12 @@ class Domi {
         );
         $dom->appendChild($stylesheetNode);
         
-        if(!is_array($stylesheets)) {
+        if (!is_array($stylesheets)) {
             $stylesheets = array($stylesheets);
         }
         
         // create an include node for each non-false stylesheet specified
-        foreach(array_filter($stylesheets) as $stylesheet) {
+        foreach (array_filter($stylesheets) as $stylesheet) {
             $includeNode = $dom->createElementNS(
                 'http://www.w3.org/1999/XSL/Transform', 
                 'xsl:include'
@@ -259,8 +279,9 @@ class Domi {
         return $dom;
     }
     
-    private function generateOutput($mode) {
-        switch($mode) {
+    private function generateOutput($mode) 
+    {
+        switch ($mode) {
             case self::RENDER_XML:
                 $output = $this->saveXml();
                 break;
@@ -273,10 +294,12 @@ class Domi {
         return $output;
     }
     
-    private function convertObjectToArray(&$element) {
+    private function convertObjectToArray(&$element) 
+    {
         // the recursive call can't operate through objects, so they
         // must be handled specially
-        if(is_object($element)) {
+        if (is_object($element)) 
+        {
             // typecast the array to an object, and clean up private and
             // protected keys
             $element = $this->keyCleanup((array)$element);
@@ -292,9 +315,10 @@ class Domi {
         return $element;
     }
     
-    private function keyCleanup($array) {
+    private function keyCleanup($array) 
+    {
         // find every invalid key (private and protected member properties)
-        foreach(array_filter(array_keys($array), array($this, 'isInvalidKey')) 
+        foreach( array_filter(array_keys($array), array($this, 'isInvalidKey')) 
             as $invalidKey) {
             // change the key name by copy / delete / create
             $data = $array[$invalidKey];
@@ -313,23 +337,25 @@ class Domi {
         return $array;
     }
     
-    private function isInvalidKey($key) {
+    private function isInvalidKey($key) 
+    {
         // a key is invalid if it has any characters that are outside
         // of the ascii range 32 - 126, which is the standard set of printable
         // characters
         return preg_match('/[^\x20-\xFE]/', $key);
     }
     
-    public function __call($method, $parameters) {
+    public function __call($method, $parameters) 
+    {
         $obj = null;
         
-        foreach($this->internalClasses as $class) {
-            if(method_exists($this->$class, $method)) {
+        foreach ($this->internalClasses as $class) {
+            if (method_exists($this->$class, $method)) {
                 $obj = $class;
             }
         }
         
-        if($obj === null) {
+        if ($obj === null) {
             $backtrace = debug_backtrace();
             $exception = 
                 "Call to undefined method DOMi::$method()"
@@ -342,11 +368,12 @@ class Domi {
         return call_user_func_array(array($this->$obj, $method), $parameters);
     }
     
-    public function __get($property) {
+    public function __get($property) 
+    {
         $get = null;
         
-        foreach($this->internalClasses as $class) {
-            if(isset($this->$class->$property)) {
+        foreach ($this->internalClasses as $class) {
+            if (isset($this->$class->$property)) {
                 $get = $this->$class->$property;
             }
         }
@@ -366,7 +393,8 @@ class Domi {
      *  @param string the prefix to be checked
      *  @retval bool whether or not the prefix is acceptable
      */
-    static public function isValidPrefix($prefix) {
+    static public function isValidPrefix($prefix) 
+    {
         return preg_match(self::REGEX_PREFIX, $prefix);
     }
     
@@ -382,15 +410,16 @@ class Domi {
      *  @param mixed xsl templates to be used for rendering
      *  @param integer render mode to be used when rendering
      */
-    static public function generate($root=false, $data=false, $xsl=null, $render=false) {
+    static public function generate($root=false, $data=false, $xsl=null, $render=false) 
+    {
         $root = $root ? $root : 'root';
         $dom = new DOMi($root);
         
-        if($data) {
+        if ($data) {
             $dom->attachToXml($data, $root);
         }
         
-        if($xsl !== null) {
+        if ($xsl !== null) {
             $render = $render ? $render : self::RENDER_HTML;
             return $dom->render($xsl, $render);
         } else {
@@ -399,4 +428,3 @@ class Domi {
     }
 }
 
-?>
