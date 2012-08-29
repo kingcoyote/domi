@@ -1,6 +1,6 @@
 <?php
 
-namespace kingcoyote;
+namespace Domi;
 
 /**
  * Improved DOM object - a merger of DOMDocument, DOMXpath and XSLTProcessor, 
