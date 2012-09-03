@@ -5,6 +5,8 @@ namespace Domi;
 use DOMDocument;
 use DOMXpath;
 use XSLTProcessor;
+use DOMNode;
+use Exception;
 
 /**
  * Improved DOM object - a merger of DOMDocument, DOMXpath and XSLTProcessor, 
