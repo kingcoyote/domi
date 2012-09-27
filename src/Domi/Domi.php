@@ -91,9 +91,7 @@ class Domi
             $node = &$parentNode;
         } else {
             $node = $this->convertToXml($data, $prefix);
-            if ($node instanceof DOMNode) {
-                $parentNode->appendChild($node);
-            }
+            $parentNode->appendChild($node);
         }
         return $node;
     }
