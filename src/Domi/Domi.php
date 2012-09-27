@@ -14,7 +14,6 @@ use Exception;
  * structure and convert the XML into the desired output format
  *
  * @author Steve Phillips <kingcoyote85@gmail.com>
- * @version 1.2.0
  */
 
 class Domi 
