@@ -60,7 +60,7 @@ class Domi
             $this->xpath = new DOMXpath($this->dom);
             $this->xslt = new XSLTProcessor();
         } else {
-            throw new exception("invalid prefix '$mainNodeName'");
+            throw new DomiException("invalid prefix '$mainNodeName'");
         }
     }
     
@@ -111,7 +111,7 @@ class Domi
         $nodeName = $prefix;
         // figure out the prefix
         if (!self::isValidPrefix($prefix)) {
-            throw new exception("invalid prefix '$prefix'");
+            throw new DomiException("invalid prefix '$prefix'");
         }
         
         // if the data needs a list node, change the name to use the list-suffix
@@ -366,7 +366,7 @@ class Domi
                 "Call to undefined method DOMi::$method()"
                 ." in {$backtrace[1]['file']}"
                 ." on line {$backtrace[1]['line']}";
-            throw new exception($exception);
+            throw new DomiException($exception);
         }
         
         // if it exists, transparently call and return that function
